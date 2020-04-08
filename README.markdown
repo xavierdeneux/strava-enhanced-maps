@@ -1,21 +1,17 @@
-# Map switcher for Strava website
 
-Adds additional maps to Strava.com:
+# Strava Enhanced Maps
 
- - [OpenStreetMap](https://www.openstreetmap.org/)
- - [Thunderforest Maps](http://www.thunderforest.com/maps/): OpenCycleMap, Transport, Outdoors
- - [mtbmap.cz](http://mtbmap.cz/)
- - [mapy.cz](https://mapy.cz/)
- - [Google Maps](https://maps.google.com/)
 
-## Installation
+J'ai développé cette extension chrome pour avoir un outil qui m'aide à la planification d'itinéraires, qu'ils soient en cours à pied, vélo ou encore randonnée.
 
- - [Chrome Web Store](https://chrome.google.com/webstore/detail/strava-map-switcher/djcheclpmmkcdkjcenfamalobdenmici)
- - [Firefox Addons](https://addons.mozilla.org/cs/firefox/addon/strava-map-switcher/)
- - [GreaseMonkey](https://rawgit.com/liskin/strava-map-switcher/master/greasemonkey.user.js)
+Pour cela j'ai ajouté le support de plusieurs fonds de carte dont je me sers beaucoup:
 
-## Bookmarklet
+-  [OpenStreetMap](https://www.openstreetmap.org/)
 
-If you can't or don't want to use the addon/userscript, it works as a bookmarklet too:
+-  [GeoPortail](https://www.geoportail.gouv.fr/carte) Cartes IGN standard, satelite et topographiques
 
-    javascript:jQuery('body').append(jQuery("<script src='https://cdn.jsdelivr.net/gh/liskin/strava-map-switcher@master/inject.js'></script>"));void(0);
+-  [Thunderforest Maps](http://www.thunderforest.com/maps/): OpenCycleMap, Transport, Outdoors
+
+
+
+Extension inspirée de l'extension [strava-map-switcher](https://github.com/liskin/strava-map-switcher)

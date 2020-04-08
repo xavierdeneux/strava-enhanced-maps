@@ -55,14 +55,6 @@ function addLayers(map) {
 
 Strava.Maps.Mapbox.Base.mapIds.runbikehike_id = "mapbox.run-bike-hike";
 
-var layerNames =
-	{terrain: Strava.I18n.Locale.t("strava.maps.google.custom_control.terrain")
-	,standard: Strava.I18n.Locale.t("strava.maps.google.custom_control.standard")
-	,satellite: Strava.I18n.Locale.t("strava.maps.google.custom_control.satellite")
-	};
-allMaps.forEach(l => layerNames[l.id] = l.name);
-
-
 var routeBuilderOpts = jQuery('#view-options li.map-style div.switches');
 if (routeBuilderOpts.length) {
 	var once = true;
@@ -71,18 +63,15 @@ if (routeBuilderOpts.length) {
 
 		if (once) {
 			once = false;
-
 			addLayers(map);
 		}
 
-		localStorage.stravaMapSwitcherPreferred = t;
+		localStorage.currentStravaMap = t;
 		return map.setLayer(t);
 	};
 
-	var preferredMap = localStorage.stravaMapSwitcherPreferred;
+	var currentStravaMap = localStorage.currentStravaMap;
 
-	// change map so that our setMapStyle is called
-	routeBuilderOpts.find('div:last').click();
 
 	routeBuilderOpts.css({display: 'block', position: 'relative'});
 	allMaps.forEach(l =>
@@ -92,7 +81,7 @@ if (routeBuilderOpts.length) {
 	);
 	routeBuilderOpts.children().css({display: 'block', width: '100%'});
 
-	if (preferredMap) {
-		routeBuilderOpts.children().filter((_, e) => jQuery(e).data("value") === preferredMap).click();
+	if (currentStravaMap) {
+		routeBuilderOpts.children().filter((_, e) => jQuery(e).data("value") === currentStravaMap).click();
 	}
 }
