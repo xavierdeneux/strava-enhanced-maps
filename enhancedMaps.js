@@ -53,11 +53,11 @@ function addLayers(map) {
 	allMaps.forEach(l => map.layers[l.id] = tileLayer(l));
 }
 
-Strava.Maps.Mapbox.Base.mapIds.runbikehike_id = "mapbox.run-bike-hike";
 
 var routeBuilderOpts = jQuery('#view-options li.map-style div.switches');
 if (routeBuilderOpts.length) {
 	var once = true;
+	console.log('Strava.Routes', Strava.Routes.MapViewOptionsView)
 	Strava.Routes.MapViewOptionsView.prototype.setMapStyle = function(t){
 		var map = this.map;
 
@@ -66,12 +66,11 @@ if (routeBuilderOpts.length) {
 			addLayers(map);
 		}
 
-		localStorage.currentStravaMap = t;
+		localStorage.setItem('currentStravaMap', t);
 		return map.setLayer(t);
 	};
 
-	var currentStravaMap = localStorage.currentStravaMap;
-
+	var currentStravaMap = localStorage.getItem('currentStravaMap');
 
 	routeBuilderOpts.css({display: 'block', position: 'relative'});
 	allMaps.forEach(l =>
@@ -79,7 +78,18 @@ if (routeBuilderOpts.length) {
 			jQuery("<div class='button btn-xs' tabindex='0'>").data("value", l.id).text(l.name)
 		)
 	);
-	routeBuilderOpts.children().css({display: 'block', width: '100%'});
+
+	jQuery(".switches").css({
+		'width':'225px',
+		'whiteSpace' : 'normal'
+	});
+	jQuery('.switches .button').css({
+		'display' : 'inline-block',
+		'margin' : '3px',
+		'float' : 'initial',
+		'width' : 'auto'
+	})
+	routeBuilderOpts.children().css({display: 'inline-block', margin: '3px'});
 
 	if (currentStravaMap) {
 		routeBuilderOpts.children().filter((_, e) => jQuery(e).data("value") === currentStravaMap).click();
