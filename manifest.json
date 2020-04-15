@@ -1,11 +1,11 @@
 {
   "name": "strava-enhanced-maps",
-  "version": "1.0",
+  "version": "1.0.2",
   "manifest_version": 2,
   "description": "Strava Enhanced Maps",
   "homepage_url": "https://github.com/xavierdeneux/strava-enhanced-maps",
   "icons": {
-    "128": "icons/strava-enhanced-maps-128.png"
+    "128": "icons/icon128.png"
   },
   "permissions": [
     "https://www.strava.com/*"
@@ -21,6 +21,7 @@
     }
   ],
   "web_accessible_resources": [
-    "enhancedMaps.js"
+    "enhancedMaps.js",
+    "style.css"
   ]
 }
