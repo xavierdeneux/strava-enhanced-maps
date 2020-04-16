@@ -1,3 +1,11 @@
+#secondMap{
+	position : absolute;
+	top : 50px;
+	right : 0px;
+	left : 0px;
+    bottom : 0px;
+}
+
 .slider {
     -webkit-appearance: none;
     width: 100%;
@@ -24,4 +32,9 @@
 
 .route-list-options>ul>li{
     padding-right:10px;
+}
+
+.map-style select{
+    display:block;
+    width:100%;
 }
