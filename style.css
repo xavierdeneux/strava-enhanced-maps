@@ -1,3 +1,12 @@
+#map-canvas{
+    z-index:1;
+}
+
+#view-options li.map-style div.switches{
+    position: relative;
+    display: block;
+}
+
 #secondMap{
 	position : absolute;
 	top : 50px;
