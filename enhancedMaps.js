@@ -6,7 +6,7 @@ if (routeBuilderOpts.length) {
 		allMaps = [
 			{
 				id: "geoportail",
-				name: "IGN Satelitte",
+				name: "IGN Satellite",
 				tileUrl: "https://wxs.ign.fr/an7nvfzojv5wa96dsga5nk8w/geoportail/wmts?layer=ORTHOIMAGERY.ORTHOPHOTOS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
 			},
 			{
@@ -48,8 +48,8 @@ if (routeBuilderOpts.length) {
 
 		allTileLayers = {};
 		maps = [];
-		defaultOpacity = 50;
-		opacity = localStorage.getItem('opacity') || defaultOpacity;
+
+		opacity = localStorage.getItem('opacity') || 50;
 		mapCanvas = $('#map-canvas');
 
 		currentStravaFirstMap = localStorage.getItem('currentStravaFirstMap');
