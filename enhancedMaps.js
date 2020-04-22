@@ -48,11 +48,8 @@ if (routeBuilderOpts.length) {
 
 		allTileLayers = {};
 		maps = [];
-		mainMap;
 
-		opacity = localStorage.getItem('opacity') || 50;
-		mapCanvas = $('#map-canvas');
-
+		opacity = +localStorage.getItem('opacity') || 50;
 		currentStravaFirstMap = localStorage.getItem('currentStravaFirstMap');
 		currentStravaSecondMap = localStorage.getItem('currentStravaSecondMap');
 
@@ -61,12 +58,20 @@ if (routeBuilderOpts.length) {
 				this.allTileLayers[map.id] =  L.tileLayer(map.tileUrl, {attribution: ""});
 			});
 
-			if(!this.currentStravaFirstMap || this.currentStravaFirstMap == 'undefined'){
-				this.currentStravaFirstMap = this.allMaps[0].id;
+			this.checkLocalStorageValues();
+		}
+
+		checkLocalStorageValues(){
+			if(!this.currentStravaFirstMap || this.currentStravaFirstMap == 'undefined' || !this.allTileLayers[this.currentStravaFirstMap]){
+				this.setFirstMap(this.allMaps[0].id);
 			}
 
-			if(!this.currentStravaSecondMap || this.currentStravaSecondMap == 'undefined'){
-				this.currentStravaSecondMap = this.allMaps[1].id;
+			if(!this.currentStravaSecondMap || this.currentStravaSecondMap == 'undefined' || !this.allTileLayers[this.currentStravaSecondMap]){
+				this.setSecondMap(this.allMaps[1].id);
+			}
+
+			if(!this.opacity || this.opacity < 0 || this.opacity > 100){
+				this.setOpacity(50);
 			}
 		}
 
@@ -82,83 +87,61 @@ if (routeBuilderOpts.length) {
 			this.mainMap = firstMap;
 			this.addLayers(firstMap);
 			this.maps[0] = firstMap.instance;
-			//firstMap.addLayer(this.allTileLayers[this.currentStravaFirstMap]);
-			//this.mapCanvas.css('opacity', this.opacity/100);
-			//this.createSecondMap(firstMap);
+
 			this.createSelects();
+			this.onChangeMap();
+			this.updateDisplayOpacity();
 		}
 
-		createSecondMap(){
-			setTimeout(()=>{
-				let firstMap = this.maps[0];
-				let center = firstMap.getCenter();
-				let zoom = firstMap.getZoom();
-
-				// On créé la 2eme map
-				let div = document.createElement('div');
-				div.id = 'secondMap';
-				document.querySelector('#route-container').append(div)
-				let map = L.map('secondMap').setView([center.lat, center.lng], zoom);
-				L.control.layers(this.allTileLayers).addTo(map);
-
-				if(this.currentStravaSecondMap){
-					this.allTileLayers[this.currentStravaSecondMap].addTo(map);
-				}
-				firstMap.on("viewreset", this.reset.bind(this));
-				firstMap.on("drag", this.reset.bind(this));
-				this.maps[1] = map;
-			}, 2000)
-		};
-
 		changeOpacity(e){
-			this.setOpacity(+e.target.value);
+			this.setOpacity(e.target.value);
+			this.updateDisplayOpacity();
 		}
 
 		setOpacity(opacity){
 			this.opacity = opacity;
-			$('#opacityValue').html(opacity);
-			this.mapCanvas.css({'opacity': opacity/100});
-			localStorage.setItem('opacity', opacity);
+			localStorage.setItem('opacity', opacity );
 		}
 
-		reset(e){
-			this.maps[1].setView(this.maps[0].getCenter(), this.maps[0].getZoom());
+		updateDisplayOpacity(){
+			$('#opacityValue').html(this.opacity);
+			$('#map-canvas .leaflet-layer').css('opacity', 1);
+			$('#map-canvas .leaflet-layer:last-child()').css('opacity', this.opacity/100);
 		}
 
 		createSelects(){
 			let selectFirstMap = $('<select name="firstMap" id="firstMapSelect"></select>');
-			selectFirstMap.on('change', this.onChangeFirstMap.bind(this));
-			//let selectSecondMap = $('<select name="secondMap" id="secondMapSelect"><option value=""></option></select>');
-			//selectSecondMap.on('change', this.onChangeSecondMap.bind(this));
+			selectFirstMap.on('change', this.onChangeMap.bind(this));
+			let selectSecondMap = $('<select name="secondMap" id="secondMapSelect"><option value=""></option></select>');
+			selectSecondMap.on('change', this.onChangeMap.bind(this));
 
 			this.allMaps.forEach(l => {
 				let optionFirstSelect = $('<option value="'+l.id+'">'+l.name+'</option>');
-				//let optionSecondSelect = $('<option value="'+l.id+'">'+l.name+'</option>');
+				let optionSecondSelect = $('<option value="'+l.id+'">'+l.name+'</option>');
 				if(l.id === this.currentStravaFirstMap){
 					optionFirstSelect.attr('selected', 'selected');
 				}
-				// if(l.id === this.currentStravaSecondMap){
-				// 	optionSecondSelect.attr('selected', 'selected');
-				// }
+				if(l.id === this.currentStravaSecondMap){
+					optionSecondSelect.attr('selected', 'selected');
+				}
 
 				selectFirstMap.append(optionFirstSelect);
-				//selectSecondMap.append(optionSecondSelect);
+				selectSecondMap.append(optionSecondSelect);
 			});
 			$('.map-style .label').remove();
 			$('.map-style .switches')
-
+				.html('')
 				.append('<div class="label">Carte premier plan</div>')
 				.append(selectFirstMap)
 
-			// let opacityInput = $('<input type="range" value="'+this.opacity+'" max="100" min="0" step="1" class="slider">');
-			// opacityInput.on('change', {event}, this.changeOpacity.bind(this));
-			// $('#view-options .map-style')
-			// 	.append('<div class="label">Carte second plan</div>')
-			// 	.append(selectSecondMap)
-			// 	.append($('<span id="opacity"><span class="label">Opacité (<span id="opacityValue">'+this.opacity+'</span>%)</span><div id="opacitySlider">')
-			// 	.append(opacityInput)
-			// 	.append('</div></span>'));
-
+			let opacityInput = $('<input type="range" value="'+this.opacity+'" max="100" min="0" step="1" class="slider">');
+			opacityInput.on('change', {event}, this.changeOpacity.bind(this));
+			$('#view-options .map-style')
+				.append('<div class="label">Carte second plan</div>')
+				.append(selectSecondMap)
+				.append($('<span id="opacity"><span class="label">Opacité (<span id="opacityValue">'+this.opacity+'</span>%)</span><div id="opacitySlider">')
+				.append(opacityInput)
+				.append('</div></span>'));
 		}
 
 		setFirstMap(map){
@@ -171,43 +154,24 @@ if (routeBuilderOpts.length) {
 			this.currentStravaSecondMap = map;
 		}
 
-		onChangeFirstMap(){
-			// Strava.Routes.MapViewOptionsView.prototype.setMapStyle($('#firstMapSelect').val())
-			// this.setFirstMap($('#firstMapSelect').val());
-			// Strava.Routes.MapViewOptionsView.setMapStyle($('#firstMapSelect').val());
-			console.log('this.mainMap', this.mainMap)
-			this.mainMap.setLayer($('#firstMapSelect').val())
-			// console.log('this.maps[0]', this.maps[0])
-			// this.maps[0].eachLayer((layer) => {
-			// 	this.maps[0].removeLayer(layer);
-			// });
-
-			// this.maps[0].addLayer(this.getLayer(this.currentStravaFirstMap));
-		}
-
-		onChangeSecondMap(){
+		onChangeMap(){
+			this.setFirstMap($('#firstMapSelect').val());
 			let secondMapVal = $('#secondMapSelect').val();
-			// this.maps[1].eachLayer((layer) => {
-			// 	this.maps[1].removeLayer(layer);
-			// });
+
+			this.mainMap.setLayer(this.currentStravaFirstMap);
 
 			if(secondMapVal){
-				$('#opacity').show();
-				this.setSecondMap(secondMapVal);
-				this.maps[1].addLayer(this.getLayer(this.currentStravaSecondMap));
-			}else{
-				$('#opacity').hide();
-				localStorage.removeItem('currentStravaSecondMap');
-				this.setOpacity(100);
+				this.maps[0].addLayer(
+					this.getLayer(secondMapVal)
+				);
 			}
+
+			this.updateDisplayOpacity();
 		}
 
 		addLayers(map) {
 			map.layers.runbikehike = map.createLayer("run-bike-hike");
 
-			// this.allTileLayers.forEach(id=>{
-			// 	map.layers[id] = this.allTileLayers[id];
-			// });
 			for(var id in this.allTileLayers){
 				map.layers[id] = this.allTileLayers[id];
 			}
@@ -215,26 +179,13 @@ if (routeBuilderOpts.length) {
 	}
 
 	var enhancedMap = new EnhancedMaps();
-	let firstTimeCall = true;
-	var savedMap;
+
 	Strava.Routes.MapViewOptionsView.prototype.setMapStyle = function(t){
-		if(!savedMap){
-			savedMap = this.map;
-		}
-		console.log('set layer', t, this)
  		var map = this.map;
-// 		let mapInstance = map.instance;
-// console.log('??', t, mapInstance);
-// 		if(firstTimeCall){
-		// mapInstance.eachLayer(function (layer) {
-		// 	mapInstance.removeLayer(layer);
-		// });
-		if(firstTimeCall){
-			setTimeout(()=>{
-				enhancedMap.setMap(this.map);
-			},500);
-			firstTimeCall = false;
-		}
+
+		setTimeout(()=>{
+			enhancedMap.setMap(this.map);
+		},500)
 
 		return map.setLayer(t);
 	};
