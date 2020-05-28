@@ -22,6 +22,8 @@
   ],
   "web_accessible_resources": [
     "enhancedMaps.js",
+    "lib/arrive.min.js",
+    "lib/jquery-3.5.1.min.js",
     "style.css"
   ]
 }
