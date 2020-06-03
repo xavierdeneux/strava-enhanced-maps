@@ -12,7 +12,7 @@
 			}
 		}
 
-		if(document.location.href === "https://www.strava.com/routes/new?v2=true"){
+		if(document.location.href.startsWith('https://www.strava.com/routes/')){
 			let jquery = document.createElement("script");
 			jquery.src = chrome.runtime.getURL("lib/jquery-3.5.1.min.js");
 			jquery.type = "text/javascript";
@@ -33,5 +33,4 @@
 			styles.href = chrome.runtime.getURL("style.css");
 			document.body.appendChild(styles);
 		}
-
 })();
