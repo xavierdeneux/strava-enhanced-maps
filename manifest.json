@@ -1,6 +1,6 @@
 {
   "name": "Strava Enhanced Maps",
-  "version": "2.0.3",
+  "version": "2.1.2",
   "manifest_version": 2,
   "description": "Extension Strava qui permet d'ajouter de nouveaux fonds de carte au planificateur d'itinéraire.",
   "homepage_url": "https://github.com/xavierdeneux/strava-enhanced-maps",
@@ -10,16 +10,14 @@
   "permissions": [
     "https://www.strava.com/*"
   ],
-  "content_scripts": [
-    {
-      "matches": [
-        "https://www.strava.com/*"
-      ],
-      "js": [
-        "index.js"
-      ]
-    }
-  ],
+  "content_scripts": [{
+    "matches": [
+      "https://www.strava.com/*"
+    ],
+    "js": [
+      "index.js"
+    ]
+  }],
   "web_accessible_resources": [
     "enhancedMaps.js",
     "lib/arrive.min.js",
