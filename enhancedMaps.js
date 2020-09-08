@@ -41,6 +41,7 @@ class EnhancedMaps {
 	opacity = +localStorage.getItem('opacity');
 	currentStravaFirstMap = localStorage.getItem('currentStravaFirstMap');
 	currentStravaSecondMap = localStorage.getItem('currentStravaSecondMap');
+	useExtension = localStorage.getItem('useExtension') === "true";
 	originalLayers = [];
 
 	findReact(dom, traverseUp = 0) {
@@ -180,13 +181,30 @@ class EnhancedMaps {
 	}
 
 	drawUI() {
+		$('#strava-enhanced-maps').remove();
 		let node = $('<div class="Sidebar--section--r_mne" id="strava-enhanced-maps"><h4 class="text-callout text-demi mt-0 mb-0">Strava Enhanced Maps</h4><div id="mapSelects"></div></div>');
 		let selectFirstMap = $('<select name="firstMap" id="firstMapSelect"><option value=""></option></select>');
 		selectFirstMap.on('change', this.onChangeMap.bind(this));
 		let selectSecondMap = $('<select name="secondMap" id="secondMapSelect"><option value=""></option></select>');
 		selectSecondMap.on('change', this.onChangeMap.bind(this));
 
-		$('#main>div:nth-child(2)').prepend(node)
+		let resetMap = $('<span class="reset-map">Revenir à la carto originale strava</span>');
+		resetMap.on('click', this.backToOriginalMap.bind(this));
+
+		let useExtension = $('<span class="useExtension">Utiliser de nouveau l\'extension</span>');
+		useExtension.on('click', function () {
+			localStorage.setItem('useExtension', false);
+			this.useExtension = false;
+			this.init(this);
+		}.bind(this));
+
+		$('#main>div:nth-child(2)').prepend(node);
+
+		if (!this.useExtension) {
+			$('#strava-enhanced-maps').append(useExtension);
+			return;
+		}
+
 		$('#mapSelects').append('<div><span>1<sup>er</sup> plan</span></div>');
 		$('#mapSelects div:first').append(selectFirstMap);
 		$('#mapSelects').append('<div><span>2<sup>nd</sup> plan</span></div>');
@@ -200,6 +218,11 @@ class EnhancedMaps {
 		$('#strava-enhanced-maps').append(
 			$('<div id="opacity"><span class="label">Opacité (<span id="opacityValue"></span>%)</span><div id="opacitySlider"></div></div>')
 		);
+
+
+		if (this.useExtension) {
+			$('#strava-enhanced-maps').append(resetMap);
+		}
 
 		$('#opacitySlider').append(opacityInput);
 		if (!this.currentStravaSecondMap) {
@@ -230,19 +253,40 @@ class EnhancedMaps {
 		if (!this.opacity || this.opacity < 0 || this.opacity > 100) {
 			this.opacity = 50;
 		}
+
+		if (!this.useExtension) {
+			localStorage.setItem('useExtension', true);
+			this.useExtension = true;
+		}
+	}
+
+	backToOriginalMap() {
+		this.mapInstance.getStyle().layers.filter(l => true).map(l => l.id).forEach(l => this.mapInstance.removeLayer(l));
+		this.originalLayers.forEach(originalLayer => {
+			this.mapInstance.addLayer(originalLayer);
+		});
+		localStorage.setItem('useExtension', false);
+		this.useExtension = false;
+		this.drawUI();
 	}
 
 	async init() {
 		this.reactInstance = this.findReact(document.getElementsByClassName('mapboxgl-map')[0]);
 		this.checkLocalStorageValues();
 
+
 		await this.wait(() => {
 			this.reactInstance.return.memoizedProps.mapboxRef((m) => (this.mapInstance = m, m));
 			return this.mapInstance;
 		});
 
+
 		this.originalLayers = this.mapInstance.getStyle().layers;
 		this.drawUI();
+
+		if (!this.useExtension) {
+			return;
+		}
 
 		setTimeout(() => {
 			this.onChangeMap();
