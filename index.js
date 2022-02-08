@@ -19,11 +19,24 @@
 			jquery.onload = () => scriptIsLoaded();
 			document.body.appendChild(jquery);
 
-			let arrive = document.createElement('script');
-			arrive.src = chrome.runtime.getURL('lib/arrive.min.js');
-			arrive.type = 'text/javascript';
-			arrive.onload = () => scriptIsLoaded();
-			document.body.appendChild(arrive);
+			let jqueryUi = document.createElement("script");
+			jqueryUi.src = chrome.runtime.getURL("lib/jquery-ui-1.3.1.min.js");
+			jqueryUi.type = "text/javascript";
+			jqueryUi.onload = () => scriptIsLoaded();
+			document.body.appendChild(jqueryUi);
+
+			var jqueryUiStyle = document.createElement('link');
+			jqueryUiStyle.rel = 'stylesheet';
+			jqueryUiStyle.type = 'text/css';
+			jqueryUiStyle.media = 'screen';
+			jqueryUiStyle.href = chrome.runtime.getURL("lib/jquery-ui-1.3.1.min.css");
+			document.body.appendChild(jqueryUiStyle);
+
+			// let arrive = document.createElement('script');
+			// arrive.src = chrome.runtime.getURL('lib/arrive.min.js');
+			// arrive.type = 'text/javascript';
+			// arrive.onload = () => scriptIsLoaded();
+			// document.body.appendChild(arrive);
 
 
 			var styles = document.createElement('link');

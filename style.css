@@ -51,10 +51,6 @@
 
 
 /*  */
-#strava-enhanced-maps h4 {
-    margin-bottom: 10px;
-}
-
 #mapSelects {
     padding: 0px 15px;
 }
@@ -91,4 +87,14 @@
     border-radius: 2px;
     background: #FCFCFC;
     cursor: pointer;
+}
+
+#strava-enhanced-maps-title{
+    cursor:pointer;
+    margin:10px 15px;
+}
+
+#strava-enhanced-maps-title svg{
+    margin-bottom: -3px;
+    margin-left:4px;
 }
