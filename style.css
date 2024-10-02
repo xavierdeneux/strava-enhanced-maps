@@ -51,6 +51,11 @@
 
 
 /*  */
+.help-btn{
+    background-color: inherit;
+    border:none;
+}
+
 #mapSelects {
     padding: 0px 15px;
 }
@@ -91,7 +96,6 @@
 
 #strava-enhanced-maps-title{
     cursor:pointer;
-    margin:10px 15px;
 }
 
 #strava-enhanced-maps-title svg{

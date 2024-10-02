@@ -1,356 +1,488 @@
 "use strict";
+const extensionVersion = "2.4.0";
+const localStorageItemName = "popup-strava-enhanced-maps-" + extensionVersion;
 
 function _defineProperty(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
 }
 
 class EnhancedMaps {
-    constructor() {
-        _defineProperty(this, "allMaps", [{
-            id: "geoportail",
-            name: "IGN Satellite",
-            tileUrl : "https://wxs.ign.fr/pratique/geoportail/wmts?&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&TILEMATRIXSET=PM&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}"
-        }, {
-            id: "ign-classic",
-            name: "IGN Classique",
-            tileUrl: "https://strava.xavierdeneux.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
-        },
-        {
-            id:"scan25-tour",
-            name: "Scan 25 touristique",
-            tileUrl:"https://strava.xavierdeneux.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
-        },
-        {
-            id: "openstreetmap",
-            name: "OpenStreetMap",
-            tileUrl: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        },
-        {
-            id: "opencyclemap",
-            name: "Thunderforest Cycle",
-            tileUrl: "https://strava.xavierdeneux.fr/thunderforest/cycle/{z}/{x}/{y}.png"
-        },
-        {
-            id: "outdoors",
-            name: "Thunderforest Outdoors",
-            tileUrl: "https://strava.xavierdeneux.fr/thunderforest/outdoors/{z}/{x}/{y}.png"
-        },
-        {
-            id:"landscape",
-            name:"Thunderforest Landscape",
-            tileUrl:"https://strava.xavierdeneux.fr/thunderforest/landscape/{z}/{x}/{y}.png"
-        },
-        {
-            id: "transport",
-            name: "Thunderforest Transport",
-            tileUrl: "https://strava.xavierdeneux.fr/thunderforest/transport/{z}/{x}/{y}.png"
-        },
-        {
-            id: "igntopo",
-            name: "IGN Topo",
-            tileUrl: "https://wxs.ign.fr/essentiels/geoportail/wmts?layer=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&style=PCI%20vecteur&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}"
-        }]);
+  constructor() {
+    _defineProperty(this, "allMaps", [
+      {
+        id: "geoportail",
+        name: "IGN Satellite",
+        tileUrl:
+          "https://wmts.geopf.fr/wmts?&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&TILEMATRIXSET=PM&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}",
+      },
+      {
+        id: "ign-classic",
+        name: "IGN Classique",
+        tileUrl:
+          "https://strava.xavierdeneux.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+      },
+      {
+        id: "scan25-tour",
+        name: "Scan 25 touristique",
+        tileUrl:
+          "https://strava.xavierdeneux.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+      },
+      {
+        id: "openstreetmap",
+        name: "OpenStreetMap",
+        tileUrl: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      },
+      {
+        id: "opencyclemap",
+        name: "Thunderforest Cycle",
+        tileUrl:
+          "https://strava.xavierdeneux.fr/thunderforest/cycle/{z}/{x}/{y}.png",
+      },
+      {
+        id: "outdoors",
+        name: "Thunderforest Outdoors",
+        tileUrl:
+          "https://strava.xavierdeneux.fr/thunderforest/outdoors/{z}/{x}/{y}.png",
+      },
+      {
+        id: "landscape",
+        name: "Thunderforest Landscape",
+        tileUrl:
+          "https://strava.xavierdeneux.fr/thunderforest/landscape/{z}/{x}/{y}.png",
+      },
+      {
+        id: "transport",
+        name: "Thunderforest Transport",
+        tileUrl:
+          "https://strava.xavierdeneux.fr/thunderforest/transport/{z}/{x}/{y}.png",
+      },
+      {
+        id: "igntopo",
+        name: "IGN Topo",
+        tileUrl:
+          "https://wxs.ign.fr/essentiels/geoportail/wmts?layer=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&style=PCI%20vecteur&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}",
+      },
+    ]);
 
-        _defineProperty(this, "reactInstance", void 0);
+    _defineProperty(this, "reactInstance", void 0);
 
-        _defineProperty(this, "mapInstance", void 0);
+    _defineProperty(this, "mapInstance", void 0);
 
-        _defineProperty(this, "opacity", +localStorage.getItem('opacity'));
+    _defineProperty(this, "opacity", +localStorage.getItem("opacity"));
 
-        _defineProperty(this, "currentStravaFirstMap", localStorage.getItem('currentStravaFirstMap'));
+    _defineProperty(
+      this,
+      "currentStravaFirstMap",
+      localStorage.getItem("currentStravaFirstMap")
+    );
 
-        _defineProperty(this, "currentStravaSecondMap", localStorage.getItem('currentStravaSecondMap'));
+    _defineProperty(
+      this,
+      "currentStravaSecondMap",
+      localStorage.getItem("currentStravaSecondMap")
+    );
 
-        _defineProperty(this, "useExtension", localStorage.getItem('useExtension') === "true");
+    _defineProperty(
+      this,
+      "useExtension",
+      localStorage.getItem("useExtension") === "true"
+    );
 
-        _defineProperty(this, "originalLayers", []);
+    _defineProperty(this, "originalLayers", []);
+  }
+
+  findReact(dom) {
+    const key = Object.keys(dom).find((key) => key.startsWith("__reactFiber$"));
+    return dom[key].return;
+  }
+
+  sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async wait(what) {
+    for (
+      let tries = 0, delay = 100;
+      tries < 60;
+      ++tries, delay = Math.min(delay * 2, 1000)
+    ) {
+      const got = what();
+      if (got) return got;
+      await this.sleep(delay);
     }
 
-    findReact(dom, traverseUp = 0) {
-        const key = Object.keys(dom).find(key => key.startsWith("__reactInternalInstance$"));
-        const domFiber = dom[key];
-        if (domFiber == null) return null; // react 16+
+    throw new Error(`timeout ${what}`);
+  }
 
-        const GetCompFiber = fiber => {
-            let parentFiber = fiber.return;
+  sourceFromLeaflet(l) {
+    const s = {
+      type: "raster",
+      tiles: [l.tileUrl],
+      minzoom: l.opts && l.opts.minZoom ? l.opts.minZoom : 0,
+      maxzoom:
+        l.opts && l.opts.maxNativeZoom
+          ? l.opts.maxNativeZoom
+          : l.opts && l.opts.maxZoom
+          ? l.opts.maxZoom
+          : 18,
+      tileSize: 256,
+      attribution: "",
+    };
+    return s;
+  }
 
-            while (typeof parentFiber.type == "string") {
-                parentFiber = parentFiber.return;
-            }
+  layerFromLeaflet(id, firstOrSecondMap) {
+    const l = this.allMaps.find((map) => map.id == id);
+    const before = this.mapInstance.getLayer("global-heatmap")
+      ? "global-heatmap"
+      : "z-index-1";
+    const map = this.mapInstance;
+    if (!map.getSource(id)) map.addSource(id, this.sourceFromLeaflet(l));
+    if (map.getLayer(firstOrSecondMap)) map.removeLayer(firstOrSecondMap);
+    map.addLayer(
+      {
+        id: firstOrSecondMap,
+        type: "raster",
+        source: id,
+      },
+      before
+    );
+  }
 
-            return parentFiber;
-        };
+  resetLayers() {
+    this.mapInstance
+      .getStyle()
+      .layers.filter((l) => l.source == "composite")
+      .map((l) => l.id)
+      .forEach((l) => this.mapInstance.removeLayer(l));
+  }
 
-        let compFiber = GetCompFiber(domFiber);
+  setFirstMap(id) {
+    if (!id && !this.allMaps.find((map) => map.id == id)) return;
+    localStorage.currentStravaFirstMap = id;
+    this.resetLayers();
+    this.layerFromLeaflet(id, "primary");
+  }
 
-        for (let i = 0; i < traverseUp; i++) {
-            compFiber = GetCompFiber(compFiber);
+  setSecondMap(id) {
+    if (!id && !this.allMaps.find((map) => map.id == id)) return;
+    localStorage.currentStravaSecondMap = id;
+    this.resetLayers();
+    this.layerFromLeaflet(id, "secondary");
+    this.onOpacityChange();
+  }
+
+  onChangeMap() {
+    setTimeout(() => {
+      const firstMap = this.getItem("#firstMapSelect").value;
+      const secondMap = this.getItem("#secondMapSelect").value;
+      if (firstMap) {
+        this.setFirstMap(firstMap);
+        this.setSecondMap(firstMap);
+
+        if (secondMap) {
+          this.showItem("#opacity");
+          this.setSecondMap(secondMap);
+        } else {
+          this.hideItem("#opacity");
         }
+      } else {
+        this.setItem("#secondMapSelect", "");
+        this.hideItem("#opacity");
+      }
+    });
+  }
 
-        return compFiber;
-    }
+  getItem(selector) {
+    return document.querySelector(selector);
+  }
 
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+  setItem(selector, value) {
+    document.querySelector(selector).value = value;
+  }
 
-    async wait(what) {
-        for (let tries = 0, delay = 100; tries < 60; ++tries, delay = Math.min(delay * 2, 1000)) {
-            const got = what();
-            if (got) return got;
-            await this.sleep(delay);
-        }
+  showItem(selector) {
+    document.querySelector(selector).style.display = "block";
+  }
+  hideItem(selector) {
+    document.querySelector(selector).style.display = "none";
+  }
 
-        throw new Error(`timeout ${what}`);
-    }
-
-    sourceFromLeaflet(l) {
-        const s = {
-            type: "raster",
-            tiles: [l.tileUrl],
-            minzoom: l.opts && l.opts.minZoom ? l.opts.minZoom : 0,
-            maxzoom: l.opts && l.opts.maxNativeZoom ? l.opts.maxNativeZoom : l.opts && l.opts.maxZoom ? l.opts.maxZoom : 18,
-            tileSize: 256,
-            attribution: ''
-        };
-        return s;
-    }
-
-    layerFromLeaflet(id, firstOrSecondMap) {
-        const l = this.allMaps.find(map => map.id == id);
-        const before = this.mapInstance.getLayer("global-heatmap") ? "global-heatmap" : "z-index-1";
-        const map = this.mapInstance;
-        if (!map.getSource(id)) map.addSource(id, this.sourceFromLeaflet(l));
-        if (map.getLayer(firstOrSecondMap)) map.removeLayer(firstOrSecondMap);
-        map.addLayer({
-            id: firstOrSecondMap,
-            type: "raster",
-            source: id
-        }, before);
-    }
-
-    resetLayers() {
-        this.mapInstance.getStyle().layers.filter(l => l.source == "composite").map(l => l.id).forEach(l => this.mapInstance.removeLayer(l));
-    }
-
-    setFirstMap(id) {
-        if (!id && !this.allMaps.find(map => map.id == id)) return;
-        localStorage.currentStravaFirstMap = id;
-        this.resetLayers();
-        this.layerFromLeaflet(id, "primary");
-    }
-
-    setSecondMap(id) {
-        if (!id && !this.allMaps.find(map => map.id == id)) return;
-        localStorage.currentStravaSecondMap = id;
-        this.resetLayers();
-        this.layerFromLeaflet(id, "secondary");
-        this.onOpacityChange();
-    }
-
-    onChangeMap() {
+  onOpacityChange() {
+    let opacityInput = document.querySelector("#opacity input").value;
+    let opacity = opacityInput ? parseFloat(opacityInput) : null;
+    console.log("onchange opacity", opacity);
+    if (this.getItem("#secondMapSelect").value) {
+      if (typeof opacity === "number") {
+        this.opacity = opacity / 100;
+        localStorage.setItem("opacity", opacity);
         setTimeout(() => {
-            if ($('#firstMapSelect').val()) {
-                this.setFirstMap($('#firstMapSelect').val());
-
-                if ($('#secondMapSelect').val()) {
-                    $('#opacity').show();
-                    this.setSecondMap($('#secondMapSelect').val());
-                } else {
-                    $('#opacity').hide();
-                }
-            } else {
-                $('#secondMapSelect').val('');
-                $('#opacity').hide();
-            }
+          this.mapInstance.setPaintProperty(
+            "secondary",
+            "raster-opacity",
+            this.opacity
+          );
         });
+        console.log("this mapinstance", this.mapInstance);
+        document.getElementById("opacityValue").innerHTML = opacity;
+        this.setItem("#opacity input", opacity);
+      }
+    }
+  }
+
+  getFirstMap() {
+    return localStorage.currentStravaFirstMap || "";
+  }
+
+  getSecondMap() {
+    return localStorage.currentStravaSecondMap || "";
+  }
+
+  drawUI() {
+    const helpBtn = `<button type="button" class="help-btn" title="Aide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M7.5 0A7.5 7.5 0 1015 7.5 7.51 7.51 0 007.5 0zm0 14A6.5 6.5 0 1114 7.5 6.5 6.5 0 017.5 14z"></path><path d="M7.5 4a2.14 2.14 0 00-2.07 2h1A1.16 1.16 0 017.5 5a1.16 1.16 0 011.07 1c0 .58-.29.81-.76 1.13A1.39 1.39 0 007 8.25V9h1v-.75A1.55 1.55 0 018.37 8a2.22 2.22 0 001.2-2A2.14 2.14 0 007.5 4z"></path><circle cx="7.5" cy="10.75" r="0.75"></circle></svg></button>`;
+
+    const stravaEnhancedMaps = document.getElementById("strava-enhanced-maps");
+    if (stravaEnhancedMaps) {
+      stravaEnhancedMaps.remove();
     }
 
-    onOpacityChange() {
-        let opacityInput = $('#opacity input').val();
-        let opacity = opacityInput ? parseFloat(opacityInput) : null;
+    const containerClassName = document.querySelector(
+      "[class^='RoutePreferenceSidebar_section']"
+    ).className;
 
-        if ($('#secondMapSelect').val()) {
-            if (typeof opacity === 'number') {
-                this.opacity = opacity / 100;
-                localStorage.setItem('opacity', opacity);
-                this.mapInstance.setPaintProperty('secondary', 'raster-opacity', this.opacity);
-                $('#opacityValue').html(opacity);
-                $('#opacity input').val(opacity);
-            }
-        }
-    }
+    let node = document.createElement("div");
+    node.className = containerClassName;
+    node.id = "strava-enhanced-maps";
 
-    getFirstMap() {
-        return localStorage.currentStravaFirstMap || '';
-    }
+    const h4className = document.querySelector(
+      "[class^='RoutePreferenceSidebar_sectionHeader']"
+    ).className;
 
-    getSecondMap() {
-        return localStorage.currentStravaSecondMap || '';
-    }
+    node.innerHTML = `<h4 class="${h4className}" id="strava-enhanced-maps-title">Strava Enhanced Maps ${helpBtn}</h4><div id="mapSelects"></div>`;
 
-    drawUI() {
-        let helpBtn = $('<button type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M7.5 0A7.5 7.5 0 1015 7.5 7.51 7.51 0 007.5 0zm0 14A6.5 6.5 0 1114 7.5 6.5 6.5 0 017.5 14z"></path><path d="M7.5 4a2.14 2.14 0 00-2.07 2h1A1.16 1.16 0 017.5 5a1.16 1.16 0 011.07 1c0 .58-.29.81-.76 1.13A1.39 1.39 0 007 8.25V9h1v-.75A1.55 1.55 0 018.37 8a2.22 2.22 0 001.2-2A2.14 2.14 0 007.5 4z"></path><circle cx="7.5" cy="10.75" r="0.75"></circle></svg></button>');
-        $('#strava-enhanced-maps').remove();
-        let node = $('<div class="Sidebar--section--r_mne" id="strava-enhanced-maps"><h4 class="text-callout text-demi mt-0 mb-0" id="strava-enhanced-maps-title">Strava Enhanced Maps '+$(helpBtn).html()+'</h4><div id="mapSelects"></div></div>');
-        let selectFirstMap = $('<select name="firstMap" id="firstMapSelect"><option value=""></option></select>');
-        selectFirstMap.on('change', this.onChangeMap.bind(this));
-        let selectSecondMap = $('<select name="secondMap" id="secondMapSelect"><option value=""></option></select>');
-        selectSecondMap.on('change', this.onChangeMap.bind(this));
-        let resetMap = $('<span class="reset-map">Revenir à la carto originale strava</span>');
-        resetMap.on('click', this.backToOriginalMap.bind(this));
-        let useExtension = $('<span class="useExtension">Utiliser de nouveau l\'extension</span>');
-        useExtension.on('click', function () {
-            localStorage.setItem('useExtension', false);
-            this.useExtension = false;
-            this.init(this);
-        }.bind(this));
-        $('#main>div:nth-child(2)').prepend(node);
+    let selectFirstMap = document.createElement("select");
+    selectFirstMap.name = "firstMap";
+    selectFirstMap.id = "firstMapSelect";
+    selectFirstMap.innerHTML = '<option value=""></option>';
+    selectFirstMap.addEventListener("change", this.onChangeMap.bind(this));
 
-        if (!this.useExtension) {
-            $('#strava-enhanced-maps').append(useExtension);
-            return;
-        }
+    let selectSecondMap = document.createElement("select");
+    selectSecondMap.name = "secondMap";
+    selectSecondMap.id = "secondMapSelect";
+    selectSecondMap.innerHTML = '<option value=""></option>';
+    selectSecondMap.addEventListener("change", this.onChangeMap.bind(this));
 
-        $('#mapSelects').append('<div><span>1<sup>er</sup> plan</span></div>');
-        $('#mapSelects div:first').append(selectFirstMap);
-        $('#mapSelects').append('<div><span>2<sup>nd</sup> plan</span></div>');
-        $('#mapSelects div:nth-child(2)').append(selectSecondMap);
-        let opacityInput = $('<input type="range" max="100" value="' + this.opacity + '" min="0" step="1" class="slider">');
-        opacityInput.on('change', {
-            event
-        }, this.onOpacityChange.bind(this));
-        $('#strava-enhanced-maps').append($('<div id="opacity"><span class="label">Opacité (<span id="opacityValue"></span>%)</span><div id="opacitySlider"></div></div>'));
+    let resetMap = document.createElement("span");
+    resetMap.className = "reset-map";
+    resetMap.textContent = "Revenir à la carto originale strava";
+    resetMap.addEventListener("click", this.backToOriginalMap.bind(this));
 
-        if (this.useExtension) {
-            $('#strava-enhanced-maps').append(resetMap);
-        }
-
-        $('#opacitySlider').append(opacityInput);
-
-        if (!this.currentStravaSecondMap) {
-            $('#opacity').hide();
-        }
-
-        this.allMaps.forEach(l => {
-            let optionFirstSelect = $('<option value="' + l.id + '">' + l.name + '</option>');
-            let optionSecondSelect = $('<option value="' + l.id + '">' + l.name + '</option>');
-
-            if (l.id === this.currentStravaFirstMap) {
-                optionFirstSelect.attr('selected', 'selected');
-            }
-
-            if (l.id === this.currentStravaSecondMap) {
-                optionSecondSelect.attr('selected', 'selected');
-            }
-
-            $('#firstMapSelect').append(optionFirstSelect);
-            $('#secondMapSelect').append(optionSecondSelect);
-        });
-    }
-
-    checkLocalStorageValues() {
-        if (!this.currentStravaFirstMap || this.currentStravaFirstMap == 'undefined') {
-            this.currentStravaFirstMap = this.allMaps[3].id;
-        }
-
-        if (!this.opacity || this.opacity < 0 || this.opacity > 100) {
-            this.opacity = 50;
-        }
-
-        if (!this.useExtension) {
-            localStorage.setItem('useExtension', true);
-            this.useExtension = true;
-        }
-    }
-
-    backToOriginalMap() {
-        this.mapInstance.getStyle().layers.filter(l => true).map(l => l.id).forEach(l => this.mapInstance.removeLayer(l));
-        this.originalLayers.forEach(originalLayer => {
-            this.mapInstance.addLayer(originalLayer);
-        });
-        localStorage.setItem('useExtension', false);
+    let useExtension = document.createElement("span");
+    useExtension.className = "useExtension";
+    useExtension.textContent = "Utiliser de nouveau l'extension";
+    useExtension.addEventListener(
+      "click",
+      function () {
+        localStorage.setItem("useExtension", false);
         this.useExtension = false;
-        this.drawUI();
+        this.init(this);
+      }.bind(this)
+    );
+
+    document.querySelector("[class^='Sidebar_content']").prepend(node);
+
+    if (!this.useExtension) {
+      document.getElementById("strava-enhanced-maps").appendChild(useExtension);
+      return;
     }
 
-    showModal() {
-        $('body').append(`<div id="dialog" title="Strava Enhanced Maps 2.2.2">
-            <p>Merci d\'utiliser Strava Enhanced Maps!
-            <br /><br />
-            Je viens de livrer une nouvelle version qui répare les carte IGN cassées depuis quelques jours.
-            <br /><br />
-            J\'en ai profité pour ajouter quelques nouveaux fonds de carte et acheter une clé d'API chez Thunderforest pour que vous ne voyez plus le message "API Key required" sur certains fonds de carte. <br />
-            Fonds de carte ajoutés:<ul>
-            <li>Scan 25 touristique, fournie par IGN pour afficher les points d'interêt touristiques</li>
-            <li>Thunderforest Landscape</li>
-            </ul>Si vous avez des idées d\'amélioration ou des bugs à me faire remonter, n\'hésitez pas à me contacter sur <a href="mailto:x.deneux@gmail.com" target="_blank">x.deneux@gmail.com</a> ou via twitter <a href="https://twitter.com/xavierdeneux" target="_blank">@xavierdeneux</a>
-            <br /><br />
-            Si vous souhaitez soutenir les développements de l'extension vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
-            <br /><br />
-            Merci et bonnes sorties!
-            <br /><br />
-            Xavier</p></div>`);
+    let mapSelects = document.getElementById("mapSelects");
+    let firstMapDiv = document.createElement("div");
+    firstMapDiv.innerHTML = "<span>1<sup>er</sup> plan</span>";
+    firstMapDiv.appendChild(selectFirstMap);
+    mapSelects.appendChild(firstMapDiv);
 
-        $( function() {
-            $( "#dialog" ).dialog({
-                width: 600,
-            });
-        });
+    let secondMapDiv = document.createElement("div");
+    secondMapDiv.innerHTML = "<span>2<sup>nd</sup> plan</span>";
+    secondMapDiv.appendChild(selectSecondMap);
+    mapSelects.appendChild(secondMapDiv);
+
+    let opacityInput = document.createElement("input");
+    opacityInput.type = "range";
+    opacityInput.max = "100";
+    opacityInput.value = this.opacity;
+    opacityInput.min = "0";
+    opacityInput.step = "1";
+    opacityInput.className = "slider";
+    opacityInput.addEventListener("change", this.onOpacityChange.bind(this));
+    console.log("x");
+    let opacityDiv = document.createElement("div");
+    opacityDiv.id = "opacity";
+    opacityDiv.innerHTML =
+      '<span class="label">Opacité (<span id="opacityValue"></span>%)</span><div id="opacitySlider"></div>';
+    opacityDiv.querySelector("#opacitySlider").appendChild(opacityInput);
+
+    document.getElementById("strava-enhanced-maps").appendChild(opacityDiv);
+
+    if (this.useExtension) {
+      document.getElementById("strava-enhanced-maps").appendChild(resetMap);
     }
 
-    async init() {
-        this.reactInstance = this.findReact(document.getElementsByClassName('mapboxgl-map')[0]);
-        this.checkLocalStorageValues();
-        await this.wait(() => {
-            this.reactInstance.return.memoizedProps.mapboxRef(m => (this.mapInstance = m, m));
-            return this.mapInstance;
-        });
-        this.originalLayers = this.mapInstance.getStyle().layers;
-        this.drawUI();
-
-        if (!this.useExtension) {
-            return;
-        }
-
-        setTimeout(() => {
-            this.onChangeMap();
-        }, 1000);
-
-        if(!localStorage.getItem('popup-strava-enhanced-maps-2.2.2')){
-            this.showModal();
-            localStorage.setItem('popup-strava-enhanced-maps-2.2.2','true');
-        }
-
-        $('#strava-enhanced-maps-title').click(()=>{
-            this.showModal();
-        })
+    if (!this.currentStravaSecondMap) {
+      opacityDiv.style.display = "none";
     }
 
+    this.allMaps.forEach((l) => {
+      let optionFirstSelect = document.createElement("option");
+      optionFirstSelect.value = l.id;
+      optionFirstSelect.textContent = l.name;
+
+      let optionSecondSelect = document.createElement("option");
+      optionSecondSelect.value = l.id;
+      optionSecondSelect.textContent = l.name;
+
+      if (l.id === this.currentStravaFirstMap) {
+        optionFirstSelect.selected = true;
+      }
+
+      if (l.id === this.currentStravaSecondMap) {
+        optionSecondSelect.selected = true;
+      }
+
+      selectFirstMap.appendChild(optionFirstSelect);
+      selectSecondMap.appendChild(optionSecondSelect);
+    });
+  }
+
+  checkLocalStorageValues() {
+    if (
+      !this.currentStravaFirstMap ||
+      this.currentStravaFirstMap == "undefined"
+    ) {
+      this.currentStravaFirstMap = this.allMaps[3].id;
+    }
+
+    if (!this.opacity || this.opacity < 0 || this.opacity > 100) {
+      this.opacity = 50;
+    }
+
+    if (!this.useExtension) {
+      localStorage.setItem("useExtension", true);
+      this.useExtension = true;
+    }
+  }
+
+  backToOriginalMap() {
+    this.mapInstance
+      .getStyle()
+      .layers.filter((l) => true)
+      .map((l) => l.id)
+      .forEach((l) => this.mapInstance.removeLayer(l));
+    this.originalLayers.forEach((originalLayer) => {
+      this.mapInstance.addLayer(originalLayer);
+    });
+    localStorage.setItem("useExtension", false);
+    this.useExtension = false;
+    this.drawUI();
+  }
+
+  showModal() {
+    const modal = new tingle.modal({
+      footer: true,
+      stickyFooter: false,
+      closeMethods: ["overlay", "button"],
+    });
+
+    // set content
+    modal.setContent(`
+      <div>
+        <h1>Strava Enhanced Maps 2.4.0</h1>
+        <h2>Octobre 2024</h2>
+        <p>Merci d'utiliser Strava Enhanced Maps!
+        <br /><br />
+        Strava a recemment fait peau neuve avec son concepteur d'itinéraire. <br />J'ai donc dû y passer quelque soirées pour revoir le fonctionnement de l'extension pour qu'elle fonctionne avec cette nouvelle version.
+        <br /><br />
+        Si vous souhaitez soutenir les développements de l'extension qui est gratuite (contrairement à mon abonnement qui me permet de vous offrir cette extension 😁), vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
+        <br /><br />
+        Pour tout soucis ou toute idée, n'hésitez pas à me contacter à l'adresse x.deneux at gmail.com<br /><br />
+        Merci et bonnes sorties!
+        <br /><br />
+        Xavier</p>
+      </div>
+    `);
+
+    modal.addFooterBtn(
+      "Fermer",
+      "tingle-btn tingle-btn--pull-right",
+      function () {
+        modal.close();
+      }
+    );
+
+    // open modal
+    modal.open();
+  }
+
+  async init() {
+    this.reactInstance = this.findReact(
+      document.querySelector(".mapboxgl-map")
+    );
+    this.checkLocalStorageValues();
+
+    await this.wait(() => {
+      this.reactInstance.memoizedProps.mapboxRef(
+        (m) => ((this.mapInstance = m), m)
+      );
+      return this.mapInstance;
+    });
+    this.originalLayers = this.mapInstance.getStyle().layers;
+    this.drawUI();
+
+    if (!this.useExtension) {
+      return;
+    }
+
+    setTimeout(() => {
+      this.onChangeMap();
+    }, 1000);
+
+    if (!localStorage.getItem(localStorageItemName)) {
+      this.showModal();
+      localStorage.setItem(localStorageItemName, "true");
+    }
+
+    document
+      .getElementById("strava-enhanced-maps-title")
+      .addEventListener("click", () => {
+        this.showModal();
+      });
+  }
 }
 
 let isReady = false;
 let waitIsReady = () => {
-    setTimeout(function() {
-        if (!isReady) {
-          if($('.mapboxgl-canvas-container').children().length>1){
-              isReady = true;
-              var enhancedMap = new EnhancedMaps();
-              enhancedMap.init();
-          }else{
-            waitIsReady();
-          }
-        }
-      }, 1000)
-}
+  setTimeout(function () {
+    if (!isReady) {
+      if (
+        document.querySelector(".mapboxgl-canvas-container").children.length > 1
+      ) {
+        isReady = true;
+        var enhancedMap = new EnhancedMaps();
+        enhancedMap.init();
+      } else {
+        waitIsReady();
+      }
+    }
+  }, 1000);
+};
 waitIsReady();
