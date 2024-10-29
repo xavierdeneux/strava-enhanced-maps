@@ -1,5 +1,5 @@
 "use strict";
-const extensionVersion = "2.4.0";
+const extensionVersion = "2.4.1";
 const localStorageItemName = "popup-strava-enhanced-maps-" + extensionVersion;
 
 function _defineProperty(obj, key, value) {
@@ -29,14 +29,20 @@ class EnhancedMaps {
         id: "ign-classic",
         name: "IGN Classique",
         tileUrl:
-          "https://strava.xavierdeneux.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+          "https://wmts.geopf.fr/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}",
       },
       {
         id: "scan25-tour",
         name: "Scan 25 touristique",
         tileUrl:
-          "https://strava.xavierdeneux.fr/geoportail/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}",
+        "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
       },
+      // {
+      //   id: 'ign-topo',
+      //   name: 'IGN Topo',
+      //   tileUrl:
+      //   "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
+      // },
       {
         id: "openstreetmap",
         name: "OpenStreetMap",
@@ -65,13 +71,7 @@ class EnhancedMaps {
         name: "Thunderforest Transport",
         tileUrl:
           "https://strava.xavierdeneux.fr/thunderforest/transport/{z}/{x}/{y}.png",
-      },
-      {
-        id: "igntopo",
-        name: "IGN Topo",
-        tileUrl:
-          "https://wxs.ign.fr/essentiels/geoportail/wmts?layer=CADASTRALPARCELS.PARCELLAIRE_EXPRESS&style=PCI%20vecteur&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}",
-      },
+      }
     ]);
 
     _defineProperty(this, "reactInstance", void 0);
@@ -406,11 +406,11 @@ class EnhancedMaps {
     // set content
     modal.setContent(`
       <div>
-        <h1>Strava Enhanced Maps 2.4.0</h1>
+        <h1>Strava Enhanced Maps 2.4.1</h1>
         <h2>Octobre 2024</h2>
         <p>Merci d'utiliser Strava Enhanced Maps!
         <br /><br />
-        Strava a recemment fait peau neuve avec son concepteur d'itinéraire. <br />J'ai donc dû y passer quelque soirées pour revoir le fonctionnement de l'extension pour qu'elle fonctionne avec cette nouvelle version.
+        Après la mise à jour d'octobre de Strava, c'est au tour d'IGN d'avoir mis à jour ses fonds de carte et d'avoir changé un peu leur fonctionnement. J'ai donc dû mettre à jour l'extension pour qu'ils fonctionnent à nouveau.
         <br /><br />
         Si vous souhaitez soutenir les développements de l'extension qui est gratuite (contrairement à mon abonnement qui me permet de vous offrir cette extension 😁), vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
         <br /><br />
