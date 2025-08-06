@@ -1,5 +1,5 @@
 "use strict";
-const extensionVersion = "2.4.1";
+const extensionVersion = "2.5.0";
 const localStorageItemName = "popup-strava-enhanced-maps-" + extensionVersion;
 
 function _defineProperty(obj, key, value) {
@@ -22,31 +22,46 @@ class EnhancedMaps {
       {
         id: "geoportail",
         name: "IGN Satellite",
-        tileUrl:
-          "https://wmts.geopf.fr/wmts?&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&TILEMATRIXSET=PM&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg&TILECOL={x}&TILEROW={y}&TILEMATRIX={z}",
+        tileUrl: "https://data.geopf.fr/wmts?layer=ORTHOIMAGERY.ORTHOPHOTOS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
       },
       {
         id: "ign-classic",
         name: "IGN Classique",
         tileUrl:
-          "https://wmts.geopf.fr/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}",
-      },
+          "https://data.geopf.fr/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}"
+        },
       {
         id: "scan25-tour",
         name: "Scan 25 touristique",
         tileUrl:
         "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
       },
-      // {
-      //   id: 'ign-topo',
-      //   name: 'IGN Topo',
-      //   tileUrl:
-      //   "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
-      // },
+      {
+        id: 'ign-topo',
+        name: 'IGN Topo',
+        tileUrl:
+        "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
+      },
       {
         id: "openstreetmap",
         name: "OpenStreetMap",
         tileUrl: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      },
+      {
+        id: "cycleosm",
+        name: "Cycle OSM",
+        tileUrl: "https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
+      },
+      {
+        id: "cycleosm-lite",
+        name: "Cycle OSM Lite",
+        tileUrl: "https://a.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png",
+      },
+      {
+        id: "swiss-topo",
+        name: "Swisstopo",
+        tileUrl:
+          "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
       },
       {
         id: "opencyclemap",
@@ -406,12 +421,16 @@ class EnhancedMaps {
     // set content
     modal.setContent(`
       <div>
-        <h1>Strava Enhanced Maps 2.4.1</h1>
-        <h2>Octobre 2024</h2>
+        <h1>Strava Enhanced Maps 2.5.0</h1>
+        <h2>Août 2025</h2>
         <p>Merci d'utiliser Strava Enhanced Maps!
         <br /><br />
-        Après la mise à jour d'octobre de Strava, c'est au tour d'IGN d'avoir mis à jour ses fonds de carte et d'avoir changé un peu leur fonctionnement. J'ai donc dû mettre à jour l'extension pour qu'ils fonctionnent à nouveau.
-        <br /><br />
+        <ul>
+          <li>Ajout de nouveaux fonds de carte: Swisstopo, Cycle OSM et Cycle OSM Lite.</li>
+          <li>Rétablissement des fonds de carte IGN Satellite et IGN Classique qui étaient HS depuis la mise à jour chez IGN.</li>
+          <li>Pour ce qui est des fonds carte Thunderforest, il se peut qu'ils ne fonctionnent pas toujours car leur usage est assez limité en version gratuite. Si ils vous intéressent vraiment, contactez-moi pour que l'on en discute.</li>
+        </ul>
+        <br />
         Si vous souhaitez soutenir les développements de l'extension qui est gratuite (contrairement à mon abonnement qui me permet de vous offrir cette extension 😁), vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
         <br /><br />
         Pour tout soucis ou toute idée, n'hésitez pas à me contacter à l'adresse x.deneux at gmail.com<br /><br />

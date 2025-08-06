@@ -12,6 +12,8 @@ Pour cela j'ai ajouté le support de plusieurs fonds de carte dont je me sers be
 
 -  [Thunderforest Maps](http://www.thunderforest.com/maps/): OpenCycleMap, Transport, Outdoors
 
+-  [SwissTopo](https://www.swisstopo.admin.ch/fr)
 
+-  [CycleOSM](https://www.cyclosm.org/)
 
 Extension inspirée de l'extension [strava-map-switcher](https://github.com/liskin/strava-map-switcher)
