@@ -264,6 +264,10 @@ class EnhancedMaps {
   }
 
   drawUI() {
+    // Selector used to find className for the new widget container
+    const sectionSelector = "[class*='RoutePreferenceSidebar_section']";
+    // Selector used to prepend the new widget in the sidebar
+    const sidebarContentSelector = "[class*='Sidebar_content']";
     const helpBtn = `<button type="button" class="help-btn" title="Aide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M7.5 0A7.5 7.5 0 1015 7.5 7.51 7.51 0 007.5 0zm0 14A6.5 6.5 0 1114 7.5 6.5 6.5 0 017.5 14z"></path><path d="M7.5 4a2.14 2.14 0 00-2.07 2h1A1.16 1.16 0 017.5 5a1.16 1.16 0 011.07 1c0 .58-.29.81-.76 1.13A1.39 1.39 0 007 8.25V9h1v-.75A1.55 1.55 0 018.37 8a2.22 2.22 0 001.2-2A2.14 2.14 0 007.5 4z"></path><circle cx="7.5" cy="10.75" r="0.75"></circle></svg></button>`;
 
     const stravaEnhancedMaps = document.getElementById("strava-enhanced-maps");
@@ -271,17 +275,14 @@ class EnhancedMaps {
       stravaEnhancedMaps.remove();
     }
 
-    const containerClassName = document.querySelector(
-      "[class^='RoutePreferenceSidebar_section']"
-    ).className;
+    const sectionEl = document.querySelector(sectionSelector)
+    const headerEl = sectionEl.querySelector("h4");
+    const containerClassName = sectionEl.className;
+    const h4className = headerEl.className;
 
     let node = document.createElement("div");
     node.className = containerClassName;
     node.id = "strava-enhanced-maps";
-
-    const h4className = document.querySelector(
-      "[class^='RoutePreferenceSidebar_sectionHeader']"
-    ).className;
 
     node.innerHTML = `<h4 class="${h4className}" id="strava-enhanced-maps-title">Strava Enhanced Maps ${helpBtn}</h4><div id="mapSelects"></div>`;
 
@@ -314,7 +315,7 @@ class EnhancedMaps {
       }.bind(this)
     );
 
-    document.querySelector("[class^='Sidebar_content']").prepend(node);
+    document.querySelector(sidebarContentSelector).prepend(node);
 
     if (!this.useExtension) {
       document.getElementById("strava-enhanced-maps").appendChild(useExtension);
