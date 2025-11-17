@@ -236,7 +236,6 @@ class EnhancedMaps {
   onOpacityChange() {
     let opacityInput = document.querySelector("#opacity input").value;
     let opacity = opacityInput ? parseFloat(opacityInput) : null;
-    console.log("onchange opacity", opacity);
     if (this.getItem("#secondMapSelect").value) {
       if (typeof opacity === "number") {
         this.opacity = opacity / 100;
@@ -248,7 +247,6 @@ class EnhancedMaps {
             this.opacity
           );
         });
-        console.log("this mapinstance", this.mapInstance);
         document.getElementById("opacityValue").innerHTML = opacity;
         this.setItem("#opacity input", opacity);
       }
@@ -341,7 +339,6 @@ class EnhancedMaps {
     opacityInput.step = "1";
     opacityInput.className = "slider";
     opacityInput.addEventListener("change", this.onOpacityChange.bind(this));
-    console.log("x");
     let opacityDiv = document.createElement("div");
     opacityDiv.id = "opacity";
     opacityDiv.innerHTML =
