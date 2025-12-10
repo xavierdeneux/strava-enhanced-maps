@@ -11,10 +11,11 @@
       document.body.appendChild(s);
     }
   };
-
+  
   if (
     document.location.href.startsWith("https://www.strava.com/maps/create/")
   ) {
+    
     let tingle = document.createElement("script");
     tingle.src = chrome.runtime.getURL("lib/tingle.min.js");
     tingle.type = "text/javascript";

@@ -4,7 +4,7 @@ Make a zip that contains all the files
 Inside this folder run: `zip -r chrome.zip ./*`
 
 Send it in the dashboard developer:
-https://chrome.google.com/webstore/devconsole/ 
+https://chrome.google.com/webstore/devconsole/
 
 # Firefox
 

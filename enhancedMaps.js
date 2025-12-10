@@ -1,6 +1,13 @@
 "use strict";
-const extensionVersion = "2.5.0";
-const localStorageItemName = "popup-strava-enhanced-maps-" + extensionVersion;
+const release = {
+  version: "2.5.1",
+  date: "10 décembre 2025",
+  changes: [
+    "Rétablissement de l'extension qui était HS depuis une mise à jour chez Strava.",
+  ]
+}
+
+const localStorageItemName = "popup-strava-enhanced-maps-" + release.version;
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -265,7 +272,7 @@ class EnhancedMaps {
 
   drawUI() {
     const helpBtn = `<button type="button" class="help-btn" title="Aide"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M7.5 0A7.5 7.5 0 1015 7.5 7.51 7.51 0 007.5 0zm0 14A6.5 6.5 0 1114 7.5 6.5 6.5 0 017.5 14z"></path><path d="M7.5 4a2.14 2.14 0 00-2.07 2h1A1.16 1.16 0 017.5 5a1.16 1.16 0 011.07 1c0 .58-.29.81-.76 1.13A1.39 1.39 0 007 8.25V9h1v-.75A1.55 1.55 0 018.37 8a2.22 2.22 0 001.2-2A2.14 2.14 0 007.5 4z"></path><circle cx="7.5" cy="10.75" r="0.75"></circle></svg></button>`;
-
+console.log('drawUI')
     const stravaEnhancedMaps = document.getElementById("strava-enhanced-maps");
     if (stravaEnhancedMaps) {
       stravaEnhancedMaps.remove();
@@ -274,15 +281,11 @@ class EnhancedMaps {
     const containerClassName = document.querySelector(
       "[class^='RoutePreferenceSidebar_section']"
     ).className;
-
     let node = document.createElement("div");
     node.className = containerClassName;
     node.id = "strava-enhanced-maps";
 
-    const h4className = document.querySelector(
-      "[class^='RoutePreferenceSidebar_sectionHeader']"
-    ).className;
-
+    const h4className = document.querySelector("[class^='RoutePreferenceSidebar_section'] h4").className;
     node.innerHTML = `<h4 class="${h4className}" id="strava-enhanced-maps-title">Strava Enhanced Maps ${helpBtn}</h4><div id="mapSelects"></div>`;
 
     let selectFirstMap = document.createElement("select");
@@ -313,7 +316,7 @@ class EnhancedMaps {
         this.init(this);
       }.bind(this)
     );
-
+console.log('append',node)
     document.querySelector("[class^='Sidebar_content']").prepend(node);
 
     if (!this.useExtension) {
@@ -421,14 +424,12 @@ class EnhancedMaps {
     // set content
     modal.setContent(`
       <div>
-        <h1>Strava Enhanced Maps 2.5.0</h1>
-        <h2>Août 2025</h2>
+        <h1>Strava Enhanced Maps ${release.version}</h1>
+        <h2>${release.date}</h2>
         <p>Merci d'utiliser Strava Enhanced Maps!
         <br /><br />
         <ul>
-          <li>Ajout de nouveaux fonds de carte: Swisstopo, Cycle OSM et Cycle OSM Lite.</li>
-          <li>Rétablissement des fonds de carte IGN Satellite et IGN Classique qui étaient HS depuis la mise à jour chez IGN.</li>
-          <li>Pour ce qui est des fonds carte Thunderforest, il se peut qu'ils ne fonctionnent pas toujours car leur usage est assez limité en version gratuite. Si ils vous intéressent vraiment, contactez-moi pour que l'on en discute.</li>
+          ${release.changes.map(change => `<li>${change}</li>`).join('')}
         </ul>
         <br />
         Si vous souhaitez soutenir les développements de l'extension qui est gratuite (contrairement à mon abonnement qui me permet de vous offrir cette extension 😁), vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
