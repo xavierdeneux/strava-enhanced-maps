@@ -2,7 +2,7 @@
   let scriptsToLoad = 1;
   let scriptLoaded = 0;
 
-  scriptIsLoaded = () => {
+  const scriptIsLoaded = () => {
     scriptLoaded++;
     if (scriptLoaded === scriptsToLoad) {
       var s = document.createElement("script");
@@ -13,7 +13,7 @@
   };
   
   if (
-    document.location.href.startsWith("https://www.strava.com/maps/create/")
+    document.location.href.startsWith("https://www.strava.com/maps/create")
   ) {
     
     let tingle = document.createElement("script");

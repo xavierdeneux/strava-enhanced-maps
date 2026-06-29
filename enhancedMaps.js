@@ -1,11 +1,12 @@
-"use strict";
 const release = {
-  version: "2.5.1",
-  date: "10 décembre 2025",
+  version: "2.6.0",
+  date: "29 juin 2026",
   changes: [
     "Rétablissement de l'extension qui était HS depuis une mise à jour chez Strava.",
-  ]
-}
+    "Suppression des fonds de carte Thunderforest (compte suspendu)",
+    "Ajout de nouveaux fonds de carte IGN (IGN Scan 50 (1950), IGN Randonnée hivernale) et OpenTopoMap",
+  ],
+};
 
 const localStorageItemName = "popup-strava-enhanced-maps-" + release.version;
 
@@ -29,25 +30,14 @@ class EnhancedMaps {
       {
         id: "geoportail",
         name: "IGN Satellite",
-        tileUrl: "https://data.geopf.fr/wmts?layer=ORTHOIMAGERY.ORTHOPHOTOS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
+        tileUrl:
+          "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image%2Fjpeg&TILEMATRIXSET=PM_0_19&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
       },
       {
         id: "ign-classic",
         name: "IGN Classique",
         tileUrl:
-          "https://data.geopf.fr/wmts?layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fpng&TileMatrix={z}&TileCol={x}&TileRow={y}"
-        },
-      {
-        id: "scan25-tour",
-        name: "Scan 25 touristique",
-        tileUrl:
-        "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
-      },
-      {
-        id: 'ign-topo',
-        name: 'IGN Topo',
-        tileUrl:
-        "https://data.geopf.fr/private/wmts?apikey=ign_scan_ws&layer=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN25TOUR&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}"
+          "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image%2Fpng&TILEMATRIXSET=PM_0_19&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
       },
       {
         id: "openstreetmap",
@@ -55,14 +45,45 @@ class EnhancedMaps {
         tileUrl: "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
       },
       {
+        id: "opentopomap",
+        name: "OpenTopoMap",
+        tileUrl: "https://tile.opentopomap.org/{z}/{x}/{y}.png",
+      },
+      {
+        id: "ign-scan50",
+        name: "IGN Scan 50 (1950)",
+        tileUrl:
+          "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950&STYLE=normal&FORMAT=image%2Fjpeg&TILEMATRIXSET=PM_3_15&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+        opts: { minZoom: 3, maxZoom: 15 },
+      },
+      {
+        id: "ign-rando",
+        name: "IGN Randonnée hivernale (overlay)",
+        tileUrl:
+          "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=TRACES.RANDO.HIVERNALE&STYLE=normal&FORMAT=image%2Fpng&TILEMATRIXSET=PM_6_16&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+        opts: { minZoom: 6, maxZoom: 16, sparse: true },
+      },
+      {
+        id: "waymarked-cycling",
+        name: "Waymarked Cycling (overlay)",
+        tileUrl: "https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png",
+      },
+      {
+        id: "waymarked-hiking",
+        name: "Waymarked Hiking (overlay)",
+        tileUrl: "https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png",
+      },
+      {
         id: "cycleosm",
         name: "Cycle OSM",
-        tileUrl: "https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
+        tileUrl:
+          "https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
       },
       {
         id: "cycleosm-lite",
         name: "Cycle OSM Lite",
-        tileUrl: "https://a.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png",
+        tileUrl:
+          "https://a.tile-cyclosm.openstreetmap.fr/cyclosm-lite/{z}/{x}/{y}.png",
       },
       {
         id: "swiss-topo",
@@ -70,30 +91,6 @@ class EnhancedMaps {
         tileUrl:
           "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
       },
-      {
-        id: "opencyclemap",
-        name: "Thunderforest Cycle",
-        tileUrl:
-          "https://strava.xavierdeneux.fr/thunderforest/cycle/{z}/{x}/{y}.png",
-      },
-      {
-        id: "outdoors",
-        name: "Thunderforest Outdoors",
-        tileUrl:
-          "https://strava.xavierdeneux.fr/thunderforest/outdoors/{z}/{x}/{y}.png",
-      },
-      {
-        id: "landscape",
-        name: "Thunderforest Landscape",
-        tileUrl:
-          "https://strava.xavierdeneux.fr/thunderforest/landscape/{z}/{x}/{y}.png",
-      },
-      {
-        id: "transport",
-        name: "Thunderforest Transport",
-        tileUrl:
-          "https://strava.xavierdeneux.fr/thunderforest/transport/{z}/{x}/{y}.png",
-      }
     ]);
 
     _defineProperty(this, "reactInstance", void 0);
@@ -105,19 +102,19 @@ class EnhancedMaps {
     _defineProperty(
       this,
       "currentStravaFirstMap",
-      localStorage.getItem("currentStravaFirstMap")
+      localStorage.getItem("currentStravaFirstMap"),
     );
 
     _defineProperty(
       this,
       "currentStravaSecondMap",
-      localStorage.getItem("currentStravaSecondMap")
+      localStorage.getItem("currentStravaSecondMap"),
     );
 
     _defineProperty(
       this,
       "useExtension",
-      localStorage.getItem("useExtension") === "true"
+      localStorage.getItem("useExtension") === "true",
     );
 
     _defineProperty(this, "originalLayers", []);
@@ -126,6 +123,26 @@ class EnhancedMaps {
   findReact(dom) {
     const key = Object.keys(dom).find((key) => key.startsWith("__reactFiber$"));
     return dom[key].return;
+  }
+
+  findMapInstance(fiber) {
+    // Strava >= 2025: l'instance Mapbox est dans memoizedState (index 1)
+    let state = fiber.memoizedState;
+    let i = 0;
+    while (state) {
+      const val = state.memoizedState;
+      if (
+        val &&
+        typeof val.getStyle === "function" &&
+        typeof val.addLayer === "function"
+      ) {
+        return val;
+      }
+      state = state.next;
+      i++;
+      if (i > 20) break;
+    }
+    return null;
   }
 
   sleep(ms) {
@@ -155,29 +172,32 @@ class EnhancedMaps {
         l.opts && l.opts.maxNativeZoom
           ? l.opts.maxNativeZoom
           : l.opts && l.opts.maxZoom
-          ? l.opts.maxZoom
-          : 18,
+            ? l.opts.maxZoom
+            : 18,
       tileSize: 256,
       attribution: "",
+      // Les couches sparse (ex: TRACES.RANDO.HIVERNALE) retournent 404
+      // sur les tuiles vides. On tolère ces erreurs silencieusement.
+      ...(l.opts && l.opts.sparse ? { scheme: "xyz" } : {}),
     };
     return s;
   }
 
   layerFromLeaflet(id, firstOrSecondMap) {
     const l = this.allMaps.find((map) => map.id == id);
-    const before = this.mapInstance.getLayer("global-heatmap")
-      ? "global-heatmap"
-      : "z-index-1";
     const map = this.mapInstance;
     if (!map.getSource(id)) map.addSource(id, this.sourceFromLeaflet(l));
     if (map.getLayer(firstOrSecondMap)) map.removeLayer(firstOrSecondMap);
+    // Insérer avant "background" s'il existe, sinon en dernier
+    const layers = map.getStyle().layers;
+    const before = layers.find((l) => l.id === "background")?.id ?? undefined;
     map.addLayer(
       {
         id: firstOrSecondMap,
         type: "raster",
         source: id,
       },
-      before
+      before,
     );
   }
 
@@ -190,14 +210,14 @@ class EnhancedMaps {
   }
 
   setFirstMap(id) {
-    if (!id && !this.allMaps.find((map) => map.id == id)) return;
+    if (!id || !this.allMaps.find((map) => map.id == id)) return;
     localStorage.currentStravaFirstMap = id;
     this.resetLayers();
     this.layerFromLeaflet(id, "primary");
   }
 
   setSecondMap(id) {
-    if (!id && !this.allMaps.find((map) => map.id == id)) return;
+    if (!id || !this.allMaps.find((map) => map.id == id)) return;
     localStorage.currentStravaSecondMap = id;
     this.resetLayers();
     this.layerFromLeaflet(id, "secondary");
@@ -210,7 +230,6 @@ class EnhancedMaps {
       const secondMap = this.getItem("#secondMapSelect").value;
       if (firstMap) {
         this.setFirstMap(firstMap);
-        this.setSecondMap(firstMap);
 
         if (secondMap) {
           this.showItem("#opacity");
@@ -251,10 +270,9 @@ class EnhancedMaps {
           this.mapInstance.setPaintProperty(
             "secondary",
             "raster-opacity",
-            this.opacity
+            this.opacity,
           );
         });
-        console.log("this mapinstance", this.mapInstance);
         document.getElementById("opacityValue").innerHTML = opacity;
         this.setItem("#opacity input", opacity);
       }
@@ -278,13 +296,15 @@ class EnhancedMaps {
     }
 
     const containerClassName = document.querySelector(
-      "[class^='RoutePreferenceSidebar_section']"
+      "[class^='RoutePreferenceSidebar_section']",
     ).className;
     let node = document.createElement("div");
     node.className = containerClassName;
     node.id = "strava-enhanced-maps";
 
-    const h4className = document.querySelector("[class^='RoutePreferenceSidebar_section'] h4").className;
+    const h4className = document.querySelector(
+      "[class^='RoutePreferenceSidebar_section'] h4",
+    ).className;
     node.innerHTML = `<h4 class="${h4className}" id="strava-enhanced-maps-title">Strava Enhanced Maps ${helpBtn}</h4><div id="mapSelects"></div>`;
 
     let selectFirstMap = document.createElement("select");
@@ -310,12 +330,11 @@ class EnhancedMaps {
     useExtension.addEventListener(
       "click",
       function () {
-        localStorage.setItem("useExtension", false);
-        this.useExtension = false;
+        localStorage.setItem("useExtension", true);
+        this.useExtension = true;
         this.init(this);
-      }.bind(this)
+      }.bind(this),
     );
-console.log('append',node)
     document.querySelector("[class^='Sidebar_content']").prepend(node);
 
     if (!this.useExtension) {
@@ -342,7 +361,6 @@ console.log('append',node)
     opacityInput.step = "1";
     opacityInput.className = "slider";
     opacityInput.addEventListener("change", this.onOpacityChange.bind(this));
-    console.log("x");
     let opacityDiv = document.createElement("div");
     opacityDiv.id = "opacity";
     opacityDiv.innerHTML =
@@ -386,27 +404,24 @@ console.log('append',node)
       !this.currentStravaFirstMap ||
       this.currentStravaFirstMap == "undefined"
     ) {
-      this.currentStravaFirstMap = this.allMaps[3].id;
+      this.currentStravaFirstMap = "ign-topo";
     }
 
     if (!this.opacity || this.opacity < 0 || this.opacity > 100) {
       this.opacity = 50;
     }
 
-    if (!this.useExtension) {
+    // N'activer l'extension par défaut que si la clé n'a jamais été définie.
+    // Si l'user a explicitement choisi de ne pas l'utiliser, on respecte son choix.
+    if (localStorage.getItem("useExtension") === null) {
       localStorage.setItem("useExtension", true);
       this.useExtension = true;
     }
   }
 
   backToOriginalMap() {
-    this.mapInstance
-      .getStyle()
-      .layers.filter((l) => true)
-      .map((l) => l.id)
-      .forEach((l) => this.mapInstance.removeLayer(l));
-    this.originalLayers.forEach((originalLayer) => {
-      this.mapInstance.addLayer(originalLayer);
+    ["primary", "secondary"].forEach((id) => {
+      if (this.mapInstance.getLayer(id)) this.mapInstance.removeLayer(id);
     });
     localStorage.setItem("useExtension", false);
     this.useExtension = false;
@@ -428,10 +443,12 @@ console.log('append',node)
         <p>Merci d'utiliser Strava Enhanced Maps!
         <br /><br />
         <ul>
-          ${release.changes.map(change => `<li>${change}</li>`).join('')}
+          ${release.changes.map((change) => `<li>${change}</li>`).join("")}
         </ul>
         <br />
-        Si vous souhaitez soutenir les développements de l'extension qui est gratuite (contrairement à mon abonnement qui me permet de vous offrir cette extension 😁), vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
+        Vous avez été nombreux à me signaler que l'extension ne fonctionnait plus depuis une mise à jour de Strava. 
+        <br />Étant le seul mainteneur et le faisant à titre bénévole, il ne m'est pas toujours facile de dégager du temps pour maintenir l'extension. Mais j'ai enfin pu corriger le problème et vous proposer une nouvelle version.
+        Si vous souhaitez soutenir les développements de l'extension qui est gratuite, vous pouvez faire un don sur <strong><a href="https://paypal.me/xavierdeneux" target="_blank">https://paypal.me/xavierdeneux</a></strong>
         <br /><br />
         Pour tout soucis ou toute idée, n'hésitez pas à me contacter à l'adresse x.deneux at gmail.com<br /><br />
         Merci et bonnes sorties!
@@ -445,7 +462,7 @@ console.log('append',node)
       "tingle-btn tingle-btn--pull-right",
       function () {
         modal.close();
-      }
+      },
     );
 
     // open modal
@@ -454,14 +471,12 @@ console.log('append',node)
 
   async init() {
     this.reactInstance = this.findReact(
-      document.querySelector(".mapboxgl-map")
+      document.querySelector(".mapboxgl-map"),
     );
     this.checkLocalStorageValues();
 
     await this.wait(() => {
-      this.reactInstance.memoizedProps.mapboxRef(
-        (m) => ((this.mapInstance = m), m)
-      );
+      this.mapInstance = this.findMapInstance(this.reactInstance);
       return this.mapInstance;
     });
     this.originalLayers = this.mapInstance.getStyle().layers;
@@ -489,12 +504,11 @@ console.log('append',node)
 }
 
 let isReady = false;
-let waitIsReady = () => {
+
+const waitIsReady = () => {
   setTimeout(function () {
     if (!isReady) {
-      if (
-        document.querySelector(".mapboxgl-canvas-container").children.length > 1
-      ) {
+      if (document.querySelector(".mapboxgl-map")?.children.length >= 1) {
         isReady = true;
         var enhancedMap = new EnhancedMaps();
         enhancedMap.init();
@@ -504,4 +518,22 @@ let waitIsReady = () => {
     }
   }, 1000);
 };
+
+// Gère la navigation SPA : si l'utilisateur quitte puis revient sur /maps/create
+// sans rechargement de page, on réinitialise l'extension
+const observer = new MutationObserver(() => {
+  const onCreatePage = document.location.href.startsWith(
+    "https://www.strava.com/maps/create",
+  );
+  if (onCreatePage && !document.getElementById("strava-enhanced-maps")) {
+    isReady = false;
+    waitIsReady();
+  }
+});
+observer.observe(document.querySelector("title") || document.head, {
+  subtree: true,
+  childList: true,
+  characterData: true,
+});
+
 waitIsReady();
